@@ -1,0 +1,17 @@
+# 依赖目录
+node_modules/
+
+# 打包输出
+dist/
+
+# Trae 编辑器配置
+.trae/
+
+# 系统垃圾文件
+Thumbs.db
+Desktop.ini
+*.log
+
+# 环境变量
+.env
+.env.local

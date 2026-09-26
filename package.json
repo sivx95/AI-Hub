@@ -1,0 +1,56 @@
+{
+  "name": "ai-hub",
+  "version": "1.5.0",
+  "description": "AI 网页聚合客户端 - 多标签管理多个 AI 网站",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder --win && node scripts/set-icon.js",
+    "build:portable": "electron-builder --win portable",
+    "build:installer": "electron-builder --win nsis && node scripts/set-icon.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "rcedit": "^5.0.2"
+  },
+  "build": {
+    "appId": "com.aishub.ai-hub",
+    "productName": "AI Hub",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "scripts/**/*",
+      "icon.ico",
+      "package.json"
+    ],
+    "afterPack": "scripts/afterPack.js",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico",
+      "artifactName": "AI-Hub-Setup-${version}.exe",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AI Hub",
+      "artifactName": "AI-Hub-Setup-${version}.exe"
+    }
+  }
+}

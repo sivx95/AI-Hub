@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>无法访问</title>
+<style>
+  :root {
+    --bg-deep: #0f0f10;
+    --bg-dark: #17171a;
+    --bg-mid: #1e1e22;
+    --bg-hover: #2e2e34;
+    --border: #33333a;
+    --text-primary: #e4e4e7;
+    --text-secondary: #8b8b95;
+    --text-muted: #5e5e66;
+    --accent: #5b9bff;
+    --accent-hover: #4a8def;
+    --success: #5cc97a;
+    --warning: #e8a83d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .error-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 460px;
+    width: 100%;
+  }
+  .icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .icon-wrap svg {
+    width: 34px;
+    height: 34px;
+    stroke: var(--text-secondary);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  h1 {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .desc {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .url {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 22px;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .net-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 18px;
+  }
+  .net-badge .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .net-badge.online .dot { background: var(--success); }
+  .net-badge.online { color: var(--success); }
+  .net-badge.warn .dot { background: var(--warning); }
+  .net-badge.warn { color: var(--warning); border-color: var(--warning); }
+  .hint {
+    display: none;
+    font-size: 12px;
+    color: var(--warning);
+    background: rgba(232, 168, 61, 0.08);
+    border: 1px solid rgba(232, 168, 61, 0.3);
+    border-radius: 8px;
+    padding: 9px 14px;
+    margin-bottom: 20px;
+    max-width: 100%;
+    line-height: 1.6;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary.is-online {
+    background: var(--success);
+  }
+  .btn-primary.is-online:hover { filter: brightness(1.08); }
+  .btn-secondary {
+    background: var(--bg-mid);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover { background: var(--bg-hover); }
+  .btn svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
+</head>
+<body>
+  <div class="error-box">
+    <div class="icon-wrap">
+      <!-- 断网/离线图标 -->
+      <svg viewBox="0 0 24 24">
+        <line x1="3" y1="3" x2="21" y2="21"></line>
+        <path d="M8.5 16.5a5 5 0 0 1 7 0"></path>
+        <path d="M5 12.5a10 10 0 0 1 3-2.3"></path>
+        <path d="M19 12.5a10 10 0 0 0-3.2-2.4"></path>
+        <path d="M12 20h.01"></path>
+        <path d="M12 16.5h.01"></path>
+      </svg>
+    </div>
+    <h1 id="title">无法访问此网站</h1>
+    <p class="desc" id="desc">加载页面时出现问题，请检查网络或稍后重试。</p>
+    <div class="hint" id="hint"></div>
+    <div class="url" id="url"></div>
+    <div class="net-badge" id="netBadge">
+      <span class="dot"></span>
+      <span id="netText">当前处于离线状态</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="retryBtn">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.3"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+        <span id="retryText">重新加载</span>
+      </button>
+      <button class="btn btn-secondary" id="homeBtn" style="display:none">
+        <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+        <span>返回首页</span>
+      </button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var targetUrl = params.get('url') || '';
+  var homeUrl = params.get('home') || '';
+  var code = params.get('code') || '';
+
+  var ERROR_MAP = {
+    '-106': { title: '网络已断开', desc: '你的电脑似乎没有连接到网络，请检查网络连接后重试。' },
+    '-105': { title: '无法解析域名', desc: '找不到该网站的服务器地址，可能是网址输入有误或 DNS 出现问题。' },
+    '-137': { title: '域名解析失败', desc: 'DNS 解析失败，请检查网络连接或稍后重试。' },
+    '-102': { title: '连接被拒绝', desc: '网站服务器拒绝了连接，该网站可能暂时不可用。' },
+    '-101': { title: '连接被重置', desc: '与网站的连接被重置，网络可能不稳定或连接被中断。' },
+    '-100': { title: '连接已关闭', desc: '与网站的连接意外关闭，请重试。' },
+    '-118': { title: '连接超时', desc: '等待网站响应超时，请检查网络后重试。' },
+    '-7':   { title: '请求超时', desc: '请求超时，请检查网络后重试。' },
+    '-109': { title: '地址不可达', desc: '无法到达该网络地址，请检查网络连接。' },
+    '-21':  { title: '网络已变更', desc: '网络连接发生了变化，请重试。' },
+    '-107': { title: '安全连接失败', desc: '与网站建立安全连接时出错（SSL）。' },
+    '-200': { title: '证书名称不匹配', desc: '网站安全证书与域名不匹配。' },
+    '-201': { title: '证书已过期', desc: '网站安全证书已过期或尚未生效。' },
+    '-202': { title: '证书不受信任', desc: '网站安全证书颁发者不受信任。' },
+    '-111': { title: '代理连接失败', desc: '无法通过代理建立连接，VPN 或代理客户端可能未开启或已停止运行。' },
+    '-130': { title: '代理连接失败', desc: '无法连接到代理服务器，VPN 或代理客户端可能未开启或已停止运行。' },
+    '-310': { title: '重定向次数过多', desc: '该网页将你重定向了太多次，可能是网站配置问题。' },
+    '-324': { title: '服务器未返回数据', desc: '网站没有返回任何数据，可能暂时不可用。' },
+    '-6':   { title: '文件不存在', desc: '找不到请求的文件或页面。' }
+  };
+
+  var info = ERROR_MAP[code] || { title: '无法访问此网站', desc: '加载页面时出现问题，请检查网络或稍后重试。' };
+  document.getElementById('title').textContent = info.title;
+  document.getElementById('desc').textContent = info.desc;
+
+  var urlEl = document.getElementById('url');
+  urlEl.textContent = targetUrl || homeUrl || '';
+  urlEl.title = urlEl.textContent;
+
+  var retryBtn = document.getElementById('retryBtn');
+  var homeBtn = document.getElementById('homeBtn');
+  var retryText = document.getElementById('retryText');
+  var badge = document.getElementById('netBadge');
+  var netText = document.getElementById('netText');
+
+  // 返回首页按钮：仅在存在首页地址（标签页）时显示，登录弹窗无首页
+  if (homeUrl && homeUrl !== targetUrl) {
+    homeBtn.style.display = '';
+    homeBtn.addEventListener('click', function () {
+      location.replace(homeUrl);
+    });
+  }
+
+  retryBtn.addEventListener('click', function () {
+    location.replace(targetUrl || homeUrl);
+  });
+
+  // 代理类错误码：系统在线但代理/VPN 客户端不可用
+  var PROXY_CODES = ['-111', '-130'];
+  // 连接被重置/超时/SSL 中断等：系统在线但目标网站不可达（境外网站常因未开 VPN）
+  var BLOCKED_CODES = ['-101', '-118', '-107', '-324', '-100'];
+  var hintEl = document.getElementById('hint');
+
+  function refreshBadge() {
+    badge.classList.remove('online', 'warn');
+    hintEl.style.display = 'none';
+    if (!navigator.onLine) {
+      netText.textContent = '当前处于离线状态';
+      return;
+    }
+    if (PROXY_CODES.indexOf(code) !== -1) {
+      badge.classList.add('warn');
+      netText.textContent = '网络已连接 · 代理异常';
+      hintEl.textContent = '系统网络正常，但代理连接失败。请启动或检查你的 VPN / 代理客户端后重试。';
+      hintEl.style.display = 'block';
+    } else if (BLOCKED_CODES.indexOf(code) !== -1) {
+      badge.classList.add('warn');
+      netText.textContent = '网络已连接 · 网站不可达';
+      hintEl.textContent = '网络已连接，但无法访问该网站。如果这是境外网站（如 ChatGPT、Gemini），请开启 VPN / 代理后重试。';
+      hintEl.style.display = 'block';
+    } else {
+      badge.classList.add('online');
+      netText.textContent = '网络已连接';
+    }
+  }
+  badge.style.display = 'inline-flex';
+  refreshBadge();
+
+  // 网络恢复：提示用户可以重试（不自动刷新）
+  window.addEventListener('online', function () {
+    refreshBadge();
+    retryBtn.classList.add('is-online');
+    retryText.textContent = '网络已恢复，点击重试';
+  });
+})();
+</script>
+</body>
+</html>

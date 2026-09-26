@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>AI Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部标签栏 -->
+    <div class="tab-bar">
+      <div class="tab-bar-scroll" id="tabList"></div>
+      <div class="tab-bar-actions" id="toolbarActions"></div>
+      <div class="loading-bar" id="loadingBar"><div class="loading-bar-inner"></div></div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content-area">
+      <!-- 右侧提示词栏 -->
+      <div class="prompt-sidebar" id="promptSidebar">
+        <!-- 分组选择 -->
+        <div class="prompt-group-section">
+          <div class="prompt-group-header">
+            <div class="prompt-group-select" id="promptGroupSelect">
+              <div class="prompt-group-select-display" id="groupSelectDisplay">默认分组</div>
+              <svg class="prompt-group-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <button class="icon-btn sm" id="groupMenuBtn" title="分组菜单">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 分组下拉列表（自定义） -->
+        <div class="prompt-group-dropdown" id="promptGroupDropdown" style="display:none"></div>
+
+        <!-- 分组菜单 -->
+        <div class="prompt-group-menu" id="groupMenu" style="display:none">
+          <div class="prompt-menu-item" data-action="add-group">新建分组</div>
+          <div class="prompt-menu-item" data-action="rename-group">重命名</div>
+          <div class="prompt-menu-item" data-action="open-dir">提示词目录</div>
+          <div class="prompt-menu-item prompt-menu-item-danger" data-action="delete-group">删除分组</div>
+        </div>
+
+        <!-- 提示词列表 -->
+        <div class="prompt-list" id="promptList">
+          <div class="prompt-empty" id="promptEmpty">
+            <span>暂无提示词</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 设置页 / 首次引导页 -->
+      <div class="settings-page" id="settingsPage">
+        <div class="hero">
+          <div class="hero-title">
+            <img src="../../icon.ico" alt="AI Hub" class="hero-icon">
+            <h1>AI Hub</h1>
+          </div>
+          <p id="appVersion">v...</p>
+        </div>
+
+        <!-- 已订阅卡片 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">固定管理 <span class="count" id="tabCount">0 项</span></div>
+          </div>
+          <div class="sub-list" id="subList"></div>
+        </div>
+
+        <!-- 预设快捷添加 -->
+        <div class="card preset-section">
+          <h3>添加常用网址</h3>
+          <div class="preset-grid" id="presetGrid"></div>
+        </div>
+
+        <!-- 自定义添加 -->
+        <div class="card custom-section">
+          <h3>添加自定义网址</h3>
+          <div class="custom-form">
+            <input type="text" id="customName" class="name-input" placeholder="名称" maxlength="20">
+            <input type="text" id="customUrl" placeholder="网址 (https://...)">
+            <button class="btn btn-primary" id="addCustomBtn">添加</button>
+          </div>
+        </div>
+
+        <!-- 工具栏按钮显隐 -->
+        <div class="card toolbar-section">
+          <div class="card-header">
+            <div class="card-title">工具栏 <span class="count">勾选要在工具栏显示的按钮</span></div>
+          </div>
+          <div class="toolbar-sort-row">
+            <div class="custom-form storage-form toolbar-checkboxes" id="toolbarCheckboxList">
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarBack" checked> 后退</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarForward" checked> 前进</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarReload" checked> 刷新</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarHome" checked> 主页</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarAlwaysOnTop" checked> 窗口置顶</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarDownload" checked> 下载</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarPromptSidebar" checked> 提示词栏</label>
+              <label class="checkbox-item"><input type="checkbox" id="chkToolbarSettings" checked> 设置</label>
+            </div>
+            <button class="btn btn-primary" id="toolbarSortBtn">排序</button>
+          </div>
+        </div>
+
+        <!-- 工具栏排序浮层（模态） -->
+        <div class="toolbar-sort-overlay" id="toolbarSortOverlay" style="display:none">
+          <div class="toolbar-sort-mask" id="toolbarSortMask"></div>
+          <div class="toolbar-sort-modal">
+            <div class="toolbar-sort-header">
+              <div class="card-title">排序 <span class="count">拖拽图标自定义顺序</span></div>
+            </div>
+            <div class="toolbar-sort-list" id="toolbarSortList"></div>
+            <div class="toolbar-sort-footer">
+              <button class="btn" id="sortRemoveSep" title="移除最后一条分割线">移除分割线</button>
+              <button class="btn" id="sortAddSep" title="在末尾添加分割线">添加分割线</button>
+              <button class="btn" id="sortCancel">取消</button>
+              <button class="btn btn-primary" id="sortConfirm">确认</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 缓存管理 -->
+        <div class="card storage-section">
+          <div class="card-header">
+            <div class="card-title">缓存管理 <span class="count">清理所有固定标签的数据</span></div>
+          </div>
+          <div class="custom-form storage-form">
+            <label class="checkbox-item"><input type="checkbox" id="chkCache" checked> HTTP缓存</label>
+            <label class="checkbox-item"><input type="checkbox" id="chkSW"> Service Worker</label>
+            <label class="checkbox-item"><input type="checkbox" id="chkCookie"> Cookie</label>
+            <label class="checkbox-item"><input type="checkbox" id="chkLocal"> localStorage</label>
+            <button class="btn btn-primary" id="clearAllCacheBtn">清理</button>
+          </div>
+        </div>
+
+        <!-- 通用设置 -->
+        <div class="card general-section">
+          <div class="card-header">
+            <div class="card-title">通用设置 <span class="count">部分设置需要重启后生效</span></div>
+          </div>
+          <div class="custom-form storage-form">
+            <label class="checkbox-item"><input type="checkbox" id="chkAutoLaunch"> 开机自动启动</label>
+            <label class="checkbox-item"><input type="checkbox" id="chkLaunchMinimizedToTray"> 启动时最小化到托盘</label>
+            <label class="checkbox-item"><input type="checkbox" id="chkMinimizeToTray" checked> 关闭时最小化到托盘</label>
+            <label class="checkbox-item"><input type="checkbox" id="chkOpenLinksInNewTab"> 临时窗口在新标签页打开</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
