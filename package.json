@@ -1,6 +1,6 @@
 {
   "name": "ai-hub",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "AI 网页聚合客户端 - 多标签管理多个 AI 网站",
   "main": "src/main.js",
   "scripts": {

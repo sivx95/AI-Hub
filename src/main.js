@@ -596,13 +596,15 @@ function createTabView(tab) {
       items.push({ label: '复制链接地址', click: () => clipboard.writeText(params.linkURL) });
       // 用户主动选择：始终开临时标签，不受「临时窗口在新标签页打开」开关影响
       if (/^https?:\/\//i.test(params.linkURL)) {
-        items.push({ label: '在临时窗口打开', click: () => openEphemeralTab(params.linkURL, tab) });
+        items.push({ label: '在临时标签页打开', click: () => openEphemeralTab(params.linkURL, tab) });
+        items.push({ label: '用默认浏览器打开', click: () => shell.openExternal(params.linkURL) });
       }
     } else {
       // 划词里的纯文本网址；选区落在链接上时已有 linkURL，走上面的分支避免重复出项
       const selectedUrl = extractFirstUrl(params.selectionText);
       if (selectedUrl) {
-        items.push({ label: '在临时窗口打开', click: () => openEphemeralTab(selectedUrl, tab) });
+        items.push({ label: '在临时标签页打开', click: () => openEphemeralTab(selectedUrl, tab) });
+        items.push({ label: '用默认浏览器打开', click: () => shell.openExternal(selectedUrl) });
       }
     }
     if (params.mediaType === 'image' && params.srcURL) {
@@ -1018,19 +1020,8 @@ ipcMain.handle('add-tab', (_, { name, url }) => {
 });
 
 ipcMain.handle('remove-tab', (_, tabId) => {
-  const idx = tabs.findIndex(t => t.id === tabId);
-  if (idx === -1) return { ok: false };
-  removeTabView(tabId);
-  tabs.splice(idx, 1);
-  if (activeTabId === tabId) {
-    // 关闭活动标签后切到左边紧邻标签（Chrome 行为）；
-    // 被关的是第一个则切到右边第一个；没有标签了才回设置页
-    const neighbor = tabs[idx - 1] || tabs[idx] || null;
-    selectTab(neighbor ? neighbor.id : null);
-  }
-  saveConfig();
-  notifyTabsUpdated();
-  layoutViews();
+  if (!tabs.find(t => t.id === tabId)) return { ok: false };
+  closeOneTab(tabId);
   return { ok: true };
 });
 
@@ -1599,6 +1590,41 @@ ipcMain.handle('get-clipboard-text', () => {
     return '';
   }
 });
+
+// IPC: 标签右键菜单（原生 Menu，层级高于 WebContentsView）
+ipcMain.on('show-tab-menu', (_event, { tabId, x, y }) => {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab) return;
+
+  const items = [];
+
+  items.push({
+    label: '复制链接地址',
+    click: () => clipboard.writeText(tab.url)
+  });
+  items.push({
+    label: '用默认浏览器打开',
+    click: () => shell.openExternal(tab.url)
+  });
+
+  const menu = Menu.buildFromTemplate(items);
+  menu.popup(mainWindow, { x, y });
+});
+
+function closeOneTab(tabId) {
+  const idx = tabs.findIndex(t => t.id === tabId);
+  if (idx === -1) return;
+  removeTabView(tabId);
+  tabs.splice(idx, 1);
+  if (activeTabId === tabId) {
+    const neighbor = tabs[idx - 1] || tabs[idx] || null;
+    selectTab(neighbor ? neighbor.id : null);
+  }
+  saveConfig();
+  notifyTabsUpdated();
+  layoutViews();
+}
 
 // IPC: 打开提示词存储目录
 ipcMain.handle('open-prompt-dir', () => {

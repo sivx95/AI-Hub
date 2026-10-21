@@ -109,6 +109,11 @@ function renderTabs() {
     el.addEventListener('click', () => {
       window.api.selectTab(tab.id);
     });
+    el.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.api.showTabMenu({ tabId: tab.id, x: e.clientX, y: e.clientY });
+    });
     const closeEl = el.querySelector('.tab-close');
     if (closeEl) {
       closeEl.addEventListener('click', (e) => {
@@ -1505,7 +1510,11 @@ document.addEventListener('contextmenu', (e) => {
   const target = e.target;
   const inPromptItem = target.closest('.prompt-item') || target.closest('.prompt-item-edit-input');
   const inPromptList = target.closest('.prompt-list') && !target.closest('.prompt-empty');
+  const inTab = target.closest('.tab');
   const isEditable = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+
+  // 标签右键由 renderTabs 里单独处理
+  if (inTab) return;
 
   // 如果在输入框/文本框中，显示完整编辑菜单（优先于选中文字判断）
   if (isEditable) {

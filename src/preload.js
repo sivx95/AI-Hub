@@ -63,6 +63,9 @@ contextBridge.exposeInMainWorld('api', {
   getClipboardText: () => ipcRenderer.invoke('get-clipboard-text'),
   openPromptDir: () => ipcRenderer.invoke('open-prompt-dir'),
 
+  // 标签右键菜单（原生 Menu，层级高于 WebContentsView）
+  showTabMenu: (payload) => ipcRenderer.send('show-tab-menu', payload),
+
   // 提示词栏
   togglePromptSidebar: () => ipcRenderer.send('toggle-prompt-sidebar'),
   onPromptSidebarToggled: (cb) => ipcRenderer.on('prompt-sidebar-toggled', (_, visible) => cb(visible)),

@@ -18,13 +18,13 @@ call npm run build:installer
 if errorlevel 1 goto fail
 
 echo.
-if exist "dist\AI-Hub-Setup-1.5.0.exe" goto success
+if exist "dist\AI-Hub-Setup-1.6.0.exe" goto success
 goto fail
 
 :success
 echo ============================================
 echo   Build OK!
-echo   Output: dist\AI-Hub-Setup-1.5.0.exe
+echo   Output: dist\AI-Hub-Setup-1.6.0.exe
 echo ============================================
 goto end
 
